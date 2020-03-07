@@ -1,0 +1,37 @@
+name: "AWS Credentials Via Okta"
+description: "Get temporary AWS credentials (using STS) from your Okta profile."
+inputs:
+  aws-profile:
+    description: "Name of your AWS profile to store credentials"
+    required: false
+    default: "default"
+  aws-role-arn:
+    description: "ARN of federated Okta role"
+    required: true
+  okta-username:
+    description: "Username of your Okta login (usually your email)"
+    required: true
+  okta-passowrd:
+    description: "Password of your Okta login"
+    required: true
+  okta-app-url:
+    description: "Okta AWS App URL (usually the Okta tile URL)"
+    required: true
+  okta-mfa-seed:
+    description: "Seed for obtaining Okta MFA code"
+    required: true
+  okta-mfa-method:
+    description: "Okta MFA Method (push|call|sms|totp)"
+    required: false
+    default: "token:software:totp"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.aws-profile }}
+    - ${{ inputs.aws-role-arn }}
+    - ${{ inputs.okta-username }}
+    - ${{ inputs.okta-password }}
+    - ${{ inputs.okta-app-url }}
+    - ${{ inputs.okta-mfa-seed }}
+    - ${{ inputs.okta-mfa-method }}
