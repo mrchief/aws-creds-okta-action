@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "$5"
 mkdir ~/.aws
 echo "[profile $1]\noutput = json" >> ~/.aws/config
 mfa_response=`oathtool -b --totp $6`
