@@ -1,8 +1,14 @@
-FROM python:3.8-slim
+FROM python:3.8-slim as base
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends oathtool
-RUN pip install tokendito
+FROM base as builder
+
+RUN mkdir /install
+WORKDIR /install
+
+RUN pip install --prefix=/install --no-cache-dir tokendito mintotp
+
+FROM base
+COPY --from=builder /install /usr/local
 
 COPY entrypoint.sh /entrypoint.sh
 
