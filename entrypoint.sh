@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "$@"
 mkdir ~/.aws
 echo "[profile $INPUT_AWS_PROFILE]\noutput = json" >> ~/.aws/config
 mfa_response=`echo $INPUT_OKTA_MFA_SEED | mintotp`
