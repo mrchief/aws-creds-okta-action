@@ -1,9 +1,6 @@
 #!/bin/sh
 
-echo args
-echo "$@"
-echo "=================="
 mkdir ~/.aws
-echo "[profile $1]\noutput = json" >> ~/.aws/config
-mfa_response=`echo $6 | mintotp`
-tokendito -ou $5 -R $2 --username $3 --password $4 --mfa-method $7 --mfa-response $mfa_response >> /dev/null
+echo "[profile $INPUT_AWS_PROFILE]\noutput = json" >> ~/.aws/config
+mfa_response=`echo $INPUT_OKTA_MFA_SEED | mintotp`
+tokendito -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method $INPUT_OKTA_MFA_METHOD --mfa-response $mfa_response >> /dev/null

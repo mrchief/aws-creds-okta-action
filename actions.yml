@@ -1,7 +1,7 @@
 name: "AWS Credentials Via Okta"
 description: "Get temporary AWS credentials (using STS) from your Okta profile."
 inputs:
-  awsProfile:
+  aws_profile:
     description: "Name of your AWS profile to store credentials"
     required: false
     default: "default"
@@ -27,11 +27,3 @@ inputs:
 runs:
   using: "docker"
   image: "Dockerfile"
-  args:
-    - ${{ inputs.awsProfile }}
-    - ${{ inputs.aws_role_arn }}
-    - ${{ inputs.okta_username }}
-    - ${{ inputs.okta_password }}
-    - ${{ inputs.okta_app_url }}
-    - ${{ inputs.okta_mfa_seed }}
-    - ${{ inputs.okta_mfa_method }}
