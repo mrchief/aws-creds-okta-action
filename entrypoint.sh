@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "$@"
 mkdir ~/.aws
 echo "[profile $1]\noutput = json" >> ~/.aws/config
 mfa_response=`echo $6 | mintotp`
