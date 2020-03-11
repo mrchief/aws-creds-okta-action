@@ -18,26 +18,32 @@ tokendito --config-file "${CREDS_DIR}/config" -ou $INPUT_OKTA_APP_URL -R $INPUT_
 # echo "::set-env name=AWS_CONFIG_FILE::${INPUT_WORKSPACE}/.aws/config"
 # echo "::set-env name=AWS_SHARED_CREDENTIALS_FILE::${INPUT_WORKSPACE}/.aws/credentials"
 
+# Extract value from string (Format: NAME = VALUE)
+get_val() {
+    local line="${1}"
+    echo "${line##*=*[[:space:]]}"
+}
+
 # Read credentials
 section=
 while read -r line; do
-	# Get section we are currently in
-	if [[ "${line}" =~ ^[[:space:]]*\[[-_.a-zA-Z0-9]+\][[:space:]]*$ ]]; then
-		section="${line%]}"
-		section="${section#[}"
-	fi
-	# Extract available aws export values
-	if [ "${section}" = "${INPUT_AWS_PROFILE}" ]; then
-		if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
-			aws_access_key_id="$( get_val "${line}" )"
-		fi
-		if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
-			aws_secret_access_key="$( get_val "${line}" )"
-		fi
-		if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
-			aws_session_token="$( get_val "${line}" )"
-		fi
-	fi
+    # Get section we are currently in
+    if [[ "${line}" =~ ^[[:space:]]*\[[-_.a-zA-Z0-9]+\][[:space:]]*$ ]]; then
+        section="${line%]}"
+        section="${section#[}"
+    fi
+    # Extract available aws export values
+    if [ "${section}" = "${INPUT_AWS_PROFILE}" ]; then
+        if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
+            aws_access_key_id="$( get_val "${line}" )"
+        fi
+        if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
+            aws_secret_access_key="$( get_val "${line}" )"
+        fi
+        if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
+            aws_session_token="$( get_val "${line}" )"
+        fi
+    fi
 done < "${CREDS_DIR}/credentials"
 
 # Output exports
