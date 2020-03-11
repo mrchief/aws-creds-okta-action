@@ -11,5 +11,6 @@ FROM base
 COPY --from=builder /install /usr/local
 
 COPY entrypoint.sh /entrypoint.sh
+COPY export-profile.sh /export-profile.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
