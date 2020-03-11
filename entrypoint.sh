@@ -7,4 +7,4 @@ tokendito -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_
 
 # export AWS profile as env vars since
 # https://github.community/t5/GitHub-Actions/Docker-action-can-t-create-folder-in-runner-s-home-directory/m-p/49612
-. ./export-profile.sh
+. /export-profile.sh
