@@ -1,4 +1,4 @@
-#!/bin/sh#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 # Be strict
 set -e
