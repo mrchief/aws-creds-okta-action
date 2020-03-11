@@ -1,4 +1,9 @@
-#!/bin/sh
+#!/bin/sh#!/usr/bin/env bash
+
+# Be strict
+set -e
+set -u
+set -o pipefail
 
 printenv
 
