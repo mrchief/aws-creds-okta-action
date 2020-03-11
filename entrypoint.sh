@@ -1,5 +1,7 @@
 #!/bin/sh
 
+printenv
+
 CREDS_DIR="$HOME/.aws"
 mkdir $CREDS_DIR
 echo "[profile ${INPUT_AWS_PROFILE:-default}]\noutput = json" >> $CREDS_DIR/config
