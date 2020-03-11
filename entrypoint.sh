@@ -5,8 +5,6 @@ set -e
 set -u
 set -o pipefail
 
-printenv
-
 CREDS_DIR="${HOME}/.aws"
 mkdir -p "${CREDS_DIR}"
 echo "[profile ${INPUT_AWS_PROFILE:-default}]\noutput = json" >> "${CREDS_DIR}/config"
@@ -29,13 +27,13 @@ while read -r line; do
     # Extract available aws export values
     if [ "${section}" = "${INPUT_AWS_PROFILE}" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_ACCESS_KEY_ID::${line##*=}"
+            echo "::set-env name=AWS_ACCESS_KEY_ID::${line##*=*[[:space:]]}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_SECRET_ACCESS_KEY::${line##*=}"
+            echo "::set-env name=AWS_SECRET_ACCESS_KEY::${line##*=*[[:space:]]}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_SESSION_TOKEN::${line##*=}"
+            echo "::set-env name=AWS_SESSION_TOKEN::${line##*=*[[:space:]]}"
         fi
     fi
 done < "${CREDS_DIR}/credentials"
