@@ -1,10 +1,6 @@
 name: "AWS Credentials Via Okta"
 description: "Get temporary AWS credentials (using STS) from your Okta profile."
 inputs:
-  aws_profile:
-    description: "Name of your AWS profile to store credentials"
-    required: false
-    default: "default"
   aws_role_arn:
     description: "ARN of federated Okta role"
     required: true
