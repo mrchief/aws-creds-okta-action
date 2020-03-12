@@ -31,16 +31,19 @@ while read -r line; do
     # Extract available aws export values
     if [ "${section}" = "default" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_ACCESS_KEY_ID::${line##*=*[[:space:]]}"
-            echo '::add-mask::$AWS_ACCESS_KEY_ID'
+            aws_access_key_id="${line##*=*[[:space:]]}"
+            echo "::set-env name=AWS_ACCESS_KEY_ID::${aws_access_key_id}"
+            echo "::add-mask::${aws_access_key_id}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_SECRET_ACCESS_KEY::${line##*=*[[:space:]]}"
-            echo '::add-mask::$AWS_SECRET_ACCESS_KEY'
+            aws_secret_access_key="${line##*=*[[:space:]]}"
+            echo "::set-env name=AWS_SECRET_ACCESS_KEY::${aws_secret_access_key}"
+            echo "::add-mask::${aws_secret_access_key}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
-            echo "::set-env name=AWS_SESSION_TOKEN::${line##*=*[[:space:]]}"
-            echo '::add-mask::$AWS_SESSION_TOKEN'
+            aws_session_token="${line##*=*[[:space:]]}"
+            echo "::set-env name=AWS_SESSION_TOKEN::${aws_session_token}"
+            echo "::add-mask::${aws_session_token}"
         fi
     fi
 done < "$credentials"
