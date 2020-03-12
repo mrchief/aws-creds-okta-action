@@ -5,13 +5,14 @@ set -e
 set -u
 set -o pipefail
 
-CREDS_DIR="${HOME}/.aws"
-mkdir -p "${CREDS_DIR}"
-echo "[profile ${INPUT_AWS_PROFILE:=default}]\noutput = json" >> "${CREDS_DIR}/config"
-tokendito --config-file "${CREDS_DIR}/config" -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response `echo $INPUT_OKTA_MFA_SEED | mintotp` -o "${CREDS_DIR}/credentials" >> /dev/null
+awsDir="${HOME}/.aws"
+config="${awsDir}/config"
+credentials="${awsDir}/credentials"
 
-cat "${CREDS_DIR}/config"
-cat "${CREDS_DIR}/credentials"
+mkdir -p "${awsDir}"
+
+echo -e "[profile default]\noutput = json" >> "$config"
+tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response `echo $INPUT_OKTA_MFA_SEED | mintotp` >> /dev/null
 
 # mv "${CREDS_DIR}" "${GITHUB_WORKSPACE}"
 # # since we can't write to runner's home, export these vars so that AWS CLI can find the files
@@ -22,14 +23,13 @@ cat "${CREDS_DIR}/credentials"
 # Read credentials
 section=
 while read -r line; do
-    echo $line
     # Get section we are currently in
     if [[ "${line}" =~ ^[[:space:]]*\[[-_.a-zA-Z0-9]+\][[:space:]]*$ ]]; then
         section="${line%]}"
         section="${section#[}"
     fi
     # Extract available aws export values
-    if [ "${section}" = "${INPUT_AWS_PROFILE}" ]; then
+    if [ "${section}" = "default" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
             echo "::set-env name=AWS_ACCESS_KEY_ID::${line##*=*[[:space:]]}"
         fi
@@ -40,4 +40,4 @@ while read -r line; do
             echo "::set-env name=AWS_SESSION_TOKEN::${line##*=*[[:space:]]}"
         fi
     fi
-done < "${CREDS_DIR}/credentials"
+done < "$credentials"
