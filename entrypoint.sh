@@ -32,12 +32,15 @@ while read -r line; do
     if [ "${section}" = "default" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
             echo "::set-env name=AWS_ACCESS_KEY_ID::${line##*=*[[:space:]]}"
+            echo "::add-mask::$AWS_ACCESS_KEY_ID"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
             echo "::set-env name=AWS_SECRET_ACCESS_KEY::${line##*=*[[:space:]]}"
+            echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
             echo "::set-env name=AWS_SESSION_TOKEN::${line##*=*[[:space:]]}"
+            echo "::add-mask::$AWS_SESSION_TOKEN"
         fi
     fi
 done < "$credentials"
