@@ -22,7 +22,7 @@ jobs:
       - name: get changelog
         id: changelog
         run: |
-          changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -i sed -n '/^#\s\'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
+          changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -i sed -n '/^#\s'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
           echo $changelog
           changelog="${changelog//'%'/'%25'}"
           changelog="${changelog//$'\n'/'%0A'}"
