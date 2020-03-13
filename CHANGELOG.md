@@ -1,13 +1,8 @@
-# 0.1.0 - 13-3-2020
-
-## Unclassified Changes
-
-- Initial commit
+# 1.0.0 - 12-3-2020
 
 ## Changes
 
 ### Features
-    
+
 - Export temporary credentials as env vars for subsequent steps
-- First cut
 
