@@ -44,7 +44,7 @@ You can use this if you're doing **all** of this:
 
 ## How this works
 
-This action uses the awesome [tokendito](https://github.com/dowjones/tokendito) tool to generate temporary AWS credentials. The credentials are generated in the home directory of the container and are then exported as environment variables so the subsequent steps can use them seamlessly.
+This action uses [tokendito](https://github.com/dowjones/tokendito) tool to generate temporary AWS credentials. The credentials are generated in the home directory of the container and are then exported as environment variables so the subsequent steps can use them seamlessly.
 
 It uses [mintotp](https://pypi.org/project/mintotp/) to generate a `totp`.
 
@@ -54,7 +54,7 @@ We welcome all kind of contributions, as long as they are not violating our Code
 
 - reporting a bug ([submit one here](https://github.com/mrchief/aws-creds-okta/issues))
 - proposing new feature ([submit one here](https://github.com/mrchief/aws-creds-okta/issues))
-- submitting new features or bug fixes (send a PR)
+- submitting new features or bug fixes ([send a PR](#sending-a-pr))
 
 By contributing, you agree that your contributions will be licensed under the project's [license](#license)
 
@@ -71,8 +71,8 @@ NOTE: Ensure that you merge the latest from "upstream" before making a pull requ
 
 ## Code of Conduct
 
-Please see CODE_OF_CONDUCT.md
+Please see [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## License
 
-This action is released under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0). Docker container images built in this project include third party materials. See THIRD_PARTY_NOTICE.md for details.
+This action is released under [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0). Docker container images built in this project include third party materials. See [THIRD_PARTY_NOTICE.md](THIRD_PARTY_NOTICE.md) for details.
