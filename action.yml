@@ -20,9 +20,13 @@ inputs:
     description: "Okta MFA Method (https://developer.okta.com/docs/reference/api/factors/)"
     required: false
     default: "token:software:totp"
+  totp_time_slot:
+    description: "Time slot for which OTP is valid"
+    required: false
+    default: 5
 runs:
   using: "docker"
   image: "Dockerfile"
 branding:
-  icon: 'unlock'  
-  color: 'orange'
+  icon: "unlock"
+  color: "orange"

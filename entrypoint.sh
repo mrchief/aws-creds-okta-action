@@ -11,8 +11,8 @@ credentials="${awsDir}/credentials"
 
 mkdir -p "${awsDir}"
 
-echo -e "[profile default]\noutput = json" >> "$config"
-tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response `echo $INPUT_OKTA_MFA_SEED | mintotp` >> /dev/null
+echo -e "[profile default]\noutput = json" >>"$config"
+tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${INPUT_TOTP_TIME_SLOT:=5}) >>/dev/null
 
 # Read credentials
 section=
@@ -40,4 +40,4 @@ while read -r line; do
             echo "::add-mask::${aws_session_token}"
         fi
     fi
-done < "$credentials"
+done <"$credentials"
