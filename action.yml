@@ -21,7 +21,7 @@ inputs:
     required: false
     default: "token:software:totp"
   totp_time_slot:
-    description: "Time slot for which OTP is valid"
+    description: "Time slot (in seconds) for which OTP is valid"
     required: false
     default: 5
 runs:

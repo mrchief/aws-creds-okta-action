@@ -33,6 +33,10 @@ It also masks the actual values in the logs for added security.
 - `okta_app_url` can be obtained by right clicking the Okta tile for you AWS account. This setup allows for federated login to different AWS accounts.
 - `okta_password` & `okta_mfa_seed` can be set via environment variables `${{ env.OKTA_MFA_SEED }}` although it is not recommended to do so as it can leak secrets. Github repo secrets are the easiest way but if you manage secrets via some other mechanism, you can also use them - these are just normal inputs, you can pass them anything.
 
+## Options
+
+For a list of options and their descriptions, check out `action.yml`.
+
 ## Can I use this
 
 You can use this if you're doing **all** of this:
