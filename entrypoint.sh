@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# Be strict
-set -e
 set -u
 set -o pipefail
 
@@ -10,9 +8,34 @@ config="${awsDir}/config"
 credentials="${awsDir}/credentials"
 
 mkdir -p "${awsDir}"
+echo -e "[profile default]\noutput = json" >> "$config"
 
-echo -e "[profile default]\noutput = json" >>"$config"
-tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${INPUT_TOTP_TIME_SLOT:=5}) >>/dev/null
+# Attempt to get aws credentials via tokendito
+max_attempts=10
+totp_time=${INPUT_TOTP_TIME_SLOT:=10}
+for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
+    tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN \
+        --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD \
+        --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} \
+        --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) >> /dev/null
+
+    if [[ $? == 0 ]]; then
+        echo "Succeeded getting credentials in attempt #${attempts}."
+        break
+    fi
+
+    echo "An error occurred while getting credentials. Attempt #${attempts}."
+    echo "Waiting ${totp_time} seconds before retrying..."
+    sleep ${totp_time}
+done
+
+if [[ $attempts == $((max_attempts+1)) ]]; then
+    echo "Giving up requesting credentials after ${max_attempts} attempts."
+    exit 1
+fi
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
 
 # Read credentials
 section=
