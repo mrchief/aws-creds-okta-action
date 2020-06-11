@@ -8,16 +8,16 @@ config="${awsDir}/config"
 credentials="${awsDir}/credentials"
 
 mkdir -p "${awsDir}"
-echo -e "[profile default]\noutput = json" >> "$config"
+echo -e "[profile default]\noutput = json" >>"$config"
 
 # Attempt to get aws credentials via tokendito
 max_attempts=10
 totp_time=${INPUT_TOTP_TIME_SLOT:=10}
-for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
+for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
     tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN \
         --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD \
         --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} \
-        --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) >> /dev/null
+        --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) >>/dev/null
 
     if [[ $? == 0 ]]; then
         echo "Succeeded getting credentials in attempt #${attempts}."
@@ -29,7 +29,7 @@ for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
     sleep ${totp_time}
 done
 
-if [[ $attempts == $((max_attempts+1)) ]]; then
+if [[ $attempts == $((max_attempts + 1)) ]]; then
     echo "Giving up requesting credentials after ${max_attempts} attempts."
     exit 1
 fi
