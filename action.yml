@@ -7,7 +7,7 @@ inputs:
   okta_username:
     description: "Username of your Okta login (usually your email)"
     required: true
-  okta_passowrd:
+  okta_password:
     description: "Password of your Okta login"
     required: true
   okta_app_url:
@@ -20,9 +20,13 @@ inputs:
     description: "Okta MFA Method (https://developer.okta.com/docs/reference/api/factors/)"
     required: false
     default: "token:software:totp"
+  totp_time_slot:
+    description: "Time slot (in seconds) for which OTP is valid"
+    required: false
+    default: 10
 runs:
   using: "docker"
   image: "Dockerfile"
 branding:
-  icon: 'unlock'  
-  color: 'orange'
+  icon: "unlock"
+  color: "orange"
