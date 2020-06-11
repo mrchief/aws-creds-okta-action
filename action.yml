@@ -7,7 +7,7 @@ inputs:
   okta_username:
     description: "Username of your Okta login (usually your email)"
     required: true
-  okta_passowrd:
+  okta_password:
     description: "Password of your Okta login"
     required: true
   okta_app_url:
