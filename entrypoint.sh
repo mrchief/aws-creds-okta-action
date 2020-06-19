@@ -32,7 +32,6 @@ for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
         echo -e "Waiting ${totp_time} seconds before retrying...\n"
         sleep $totp_time
     else
-        echo "An unexpected error occurred:"
         echo $t_error
         exit 1
     fi
