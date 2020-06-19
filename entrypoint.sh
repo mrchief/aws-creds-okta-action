@@ -13,27 +13,24 @@ echo -e "[profile default]\noutput = json" >> "$config"
 # Attempt to get aws credentials via tokendito
 max_attempts=10
 totp_time=30
-tokendito_err_file=/tmp/tokendito_error
-touch $tokendito_err_file
 totp_error='Each code can only be used once. Please wait for a new code and try again.'
 for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
-    echo "Requesting credentials via Tokendito."
-    tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN \
+    echo "Requesting AWS credentials via Tokendito."
+    t_error=$(tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN \
         --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD \
         --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} \
         --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) \
-        2>$tokendito_err_file 1>/dev/null
+        2>&1 1>/dev/null)
 
     if [[ $? == 0 ]]; then
         echo "Succeeded getting credentials in attempt #${attempts}."
         break
     fi
 
-    t_error=$(cat $tokendito_err_file)
     if [[ $t_error == *$totp_error* ]]; then
-        echo "This error ocurred on attempt #${attempts}: $totp_error"
+        echo "Attempt #${attempts} => ERROR: ${totp_error}"
         echo -e "Waiting ${totp_time} seconds before retrying...\n"
-        sleep ${totp_time}
+        sleep $totp_time
     else
         echo "An unexpected error occurred:"
         echo $t_error
