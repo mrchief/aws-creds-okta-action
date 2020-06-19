@@ -1,3 +1,8 @@
+# 1.1.1 - 19-6-2020
+### Bug Fixes
+    
+- Retry tokendito only on errors due to used totp code ([#9](https://github.com/mrchief/aws-creds-okta/issues9))
+
 # 1.1.0 - 11-6-2020
 ### Features
     
