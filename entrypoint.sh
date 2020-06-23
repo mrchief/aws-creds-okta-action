@@ -8,19 +8,15 @@ config="${awsDir}/config"
 credentials="${awsDir}/credentials"
 
 mkdir -p "${awsDir}"
-echo -e "[profile default]\noutput = json" >> "$config"
+echo -e "[profile default]\noutput = json" >>"$config"
 
 # Attempt to get aws credentials via tokendito
 max_attempts=10
 totp_time=30
 totp_error='Each code can only be used once. Please wait for a new code and try again.'
-for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
+for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
     echo "Requesting AWS credentials via Tokendito."
-    t_error=$(tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN \
-        --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD \
-        --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} \
-        --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) \
-        2>&1 1>/dev/null)
+    t_error=$(tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) 2>&1 1>/dev/null)
 
     if [[ $? == 0 ]]; then
         echo "Succeeded getting credentials in attempt #${attempts}."
@@ -37,7 +33,7 @@ for ((attempts = 1; attempts <= $max_attempts ; attempts++)); do
     fi
 done
 
-if [[ $attempts == $((max_attempts+1)) ]]; then
+if [[ $attempts == $((max_attempts + 1)) ]]; then
     echo "Giving up requesting credentials after ${max_attempts} attempts."
     exit 1
 fi
@@ -71,4 +67,4 @@ while read -r line; do
             echo "::add-mask::${aws_session_token}"
         fi
     fi
-done < "$credentials"
+done <"$credentials"
