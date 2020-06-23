@@ -1,3 +1,8 @@
+# 1.1.2 - 23-6-2020
+### Bug Fixes
+    
+- Do not break lines since it causes intermittent errors ([#11](https://github.com/mrchief/aws-creds-okta/issues11))
+
 # 1.1.1 - 19-6-2020
 ### Bug Fixes
     
