@@ -1,3 +1,8 @@
+# 1.1.3 - 9-10-2020
+### Bug Fixes
+    
+- replace set-env with env file ([#13](https://github.com/mrchief/aws-creds-okta/issues13))
+
 # 1.1.2 - 23-6-2020
 ### Bug Fixes
     
