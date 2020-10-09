@@ -53,17 +53,17 @@ while read -r line; do
     if [ "${section}" = "default" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
             aws_access_key_id="${line##*=*[[:space:]]}"
-            echo "::set-env name=AWS_ACCESS_KEY_ID::${aws_access_key_id}"
+            echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}" >> $GITHUB_ENV
             echo "::add-mask::${aws_access_key_id}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
             aws_secret_access_key="${line##*=*[[:space:]]}"
-            echo "::set-env name=AWS_SECRET_ACCESS_KEY::${aws_secret_access_key}"
+            echo "AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}" >> $GITHUB_ENV
             echo "::add-mask::${aws_secret_access_key}"
         fi
         if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
             aws_session_token="${line##*=*[[:space:]]}"
-            echo "::set-env name=AWS_SESSION_TOKEN::${aws_session_token}"
+            echo "AWS_SESSION_TOKEN=${aws_session_token}" >> $GITHUB_ENV
             echo "::add-mask::${aws_session_token}"
         fi
     fi
