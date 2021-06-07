@@ -5,7 +5,7 @@ FROM base as builder
 RUN mkdir /install
 WORKDIR /install
 
-RUN pip install --prefix=/install --no-cache-dir --no-warn-script-location tokendito mintotp
+RUN pip install --prefix=/install --no-cache-dir --no-warn-script-location 'tokendito>=1,<2' mintotp
 
 FROM base
 COPY --from=builder /install /usr/local
