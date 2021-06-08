@@ -1,3 +1,8 @@
+# 1.1.4 - 8-6-2021
+### Bug Fixes
+    
+- Pin tokendito version ([#15](https://github.com/mrchief/aws-creds-okta/issues15))
+
 # 1.1.3 - 9-10-2020
 ### Bug Fixes
     
