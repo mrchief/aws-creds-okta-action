@@ -4,7 +4,9 @@ Obtain temporary AWS Creds from your Okta Profile.
 
 ## Usage
 
-Here's an example. All options are required except `okta_mfa_method` which default to TOTP based notification.
+Here's an example. All options are required except:
+- `aws_profile` defaults to 'default'
+- `okta_mfa_method` which default to TOTP based notification.
 
 ```yaml
 - name: Create AWS profile
@@ -26,6 +28,35 @@ AWS_SESSION_TOKEN: ***
 ```
 
 It also masks the actual values in the logs for added security.
+
+
+You can create multiple profiles by using this action multiple times and specifying `aws_profile` for each like such:
+```yaml
+- name: Create First AWS profile
+  uses: mrchief/aws-creds-okta@master
+  with:
+    aws_profile: first-profile
+    aws_role_arn: arn:aws:iam::account-id:role/role-name
+    okta_username: okta.user@mycompany.com
+    okta_password: ${{ secrets.OKTA_PASSWORD }}
+    okta_app_url: https://mycompany.okta.com/home/amazon_aws/1234567890abcdefghij/123
+    okta_mfa_seed: ${{ secrets.OKTA_MFA_SEED }}
+
+- name: Create Second AWS profile
+  uses: mrchief/aws-creds-okta@master
+  with:
+    aws_profile: second-profile
+    aws_role_arn: arn:aws:iam::account-id:role/role-name
+    okta_username: okta.user@mycompany.com
+    okta_password: ${{ secrets.OKTA_PASSWORD }}
+    okta_app_url: https://mycompany.okta.com/home/amazon_aws/1234567890abcdefghij/123
+    okta_mfa_seed: ${{ secrets.OKTA_MFA_SEED }}
+
+- name: Run AWS Commands as Different Profiles
+  run: |
+    aws sts get-caller-identity --profile first-profile
+    aws sts get-caller-identity --profile second-profile
+```
 
 ### 💡 Note
 
