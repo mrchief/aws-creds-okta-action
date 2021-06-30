@@ -10,6 +10,10 @@ credentials="${awsDir}/credentials"
 mkdir -p "${awsDir}"
 echo -e "[profile $INPUT_AWS_PROFILE]\noutput = json" >>"$config"
 
+echo "AWS_CONFIG_FILE=${config}" >> $GITHUB_ENV
+echo "AWS_SHARED_CREDENTIALS_FILE=${credentials}" >> $GITHUB_ENV
+echo "AWS_PROFILE=${INPUT_AWS_PROFILE}" >> $GITHUB_ENV
+
 # Attempt to get aws credentials via tokendito
 max_attempts=10
 totp_time=30
@@ -50,7 +54,7 @@ while read -r line; do
         section="${section#[}"
     fi
     # Extract available aws export values
-    if [ "${section}" = "default" ]; then
+    if [ "${section}" = $INPUT_AWS_PROFILE ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
             aws_access_key_id="${line##*=*[[:space:]]}"
             echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}" >> $GITHUB_ENV
