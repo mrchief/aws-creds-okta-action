@@ -30,13 +30,13 @@ runs:
         set -o pipefail
 
         awsDir="~/.aws"
-        config="${awsDir}/config"
-        credentials="${awsDir}/credentials"
+        # config="${awsDir}/config"
+        # credentials="${awsDir}/credentials"
 
         mkdir -p "${awsDir}"
-        echo -e "[profile default]\noutput = json" >>"$config"
+        # echo -e "[profile default]\noutput = json" >>"$config"
         OKTA_MFA_METHOD="${{ inputs.aws_role_arn }}"
-        echo "tokendito --aws-profile default -ou ${{ inputs.okta_app_url }} -R ${{ inputs.aws_role_arn }} --username ${{ inputs.okta_username }} --password ${{ inputs.okta_password }} --mfa-method ${OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo ${{ inputs.okta_mfa_seed }} | mintotp 30)"
+        echo "--aws-profile default -ou ${{ inputs.okta_app_url }} -R ${{ inputs.aws_role_arn }} --username ${{ inputs.okta_username }} --password ${{ inputs.okta_password }} --mfa-method ${OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo ${{ inputs.okta_mfa_seed }} | mintotp 30)"
 
         # Attempt to get aws credentials via tokendito
         max_attempts=10
@@ -66,36 +66,36 @@ runs:
             exit 1
         fi
 
-        # Exit immediately if a command exits with a non-zero status.
-        set -e
+        # # Exit immediately if a command exits with a non-zero status.
+        # set -e
 
-        # Read credentials
-        section=
-        while read -r line; do
-            # Get section we are currently in
-            if [[ "${line}" =~ ^[[:space:]]*\[[-_.a-zA-Z0-9]+\][[:space:]]*$ ]]; then
-                section="${line%]}"
-                section="${section#[}"
-            fi
-            # Extract available aws export values
-            if [ "${section}" = "default" ]; then
-                if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
-                    aws_access_key_id="${line##*=*[[:space:]]}"
-                    echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}" >> $GITHUB_ENV
-                    echo "::add-mask::${aws_access_key_id}"
-                fi
-                if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
-                    aws_secret_access_key="${line##*=*[[:space:]]}"
-                    echo "AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}" >> $GITHUB_ENV
-                    echo "::add-mask::${aws_secret_access_key}"
-                fi
-                if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
-                    aws_session_token="${line##*=*[[:space:]]}"
-                    echo "AWS_SESSION_TOKEN=${aws_session_token}" >> $GITHUB_ENV
-                    echo "::add-mask::${aws_session_token}"
-                fi
-            fi
-        done <"$credentials"
+        # # Read credentials
+        # section=
+        # while read -r line; do
+        #     # Get section we are currently in
+        #     if [[ "${line}" =~ ^[[:space:]]*\[[-_.a-zA-Z0-9]+\][[:space:]]*$ ]]; then
+        #         section="${line%]}"
+        #         section="${section#[}"
+        #     fi
+        #     # Extract available aws export values
+        #     if [ "${section}" = "default" ]; then
+        #         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
+        #             aws_access_key_id="${line##*=*[[:space:]]}"
+        #             echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}" >> $GITHUB_ENV
+        #             echo "::add-mask::${aws_access_key_id}"
+        #         fi
+        #         if [[ "${line}" =~ ^[[:space:]]*aws_secret_access_key[[:space:]]*=.*$ ]]; then
+        #             aws_secret_access_key="${line##*=*[[:space:]]}"
+        #             echo "AWS_SECRET_ACCESS_KEY=${aws_secret_access_key}" >> $GITHUB_ENV
+        #             echo "::add-mask::${aws_secret_access_key}"
+        #         fi
+        #         if [[ "${line}" =~ ^[[:space:]]*aws_session_token[[:space:]]*=.*$ ]]; then
+        #             aws_session_token="${line##*=*[[:space:]]}"
+        #             echo "AWS_SESSION_TOKEN=${aws_session_token}" >> $GITHUB_ENV
+        #             echo "::add-mask::${aws_session_token}"
+        #         fi
+        #     fi
+        # done <"$credentials"
       shell: bash
 branding:
   icon: 'unlock'
