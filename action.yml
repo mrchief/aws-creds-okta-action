@@ -38,7 +38,8 @@ runs:
         # echo -e "[profile default]\noutput = json" >>"$config"
         OKTA_MFA_METHOD="${{ inputs.okta_mfa_method }}"
         mfa=$(echo "${{ inputs.okta_mfa_seed }}" | mintotp ${totp_time})
-        tokendito --aws-profile default -ou "${{ inputs.okta_app_url }}" -R "${{ inputs.aws_role_arn }}" -u "${{ inputs.okta_username }}" -p "${{ inputs.okta_password }}" --mfa-method "${OKTA_MFA_METHOD:=token:software:totp}" --mfa-response $mfa
+        echo "tokendito -ap default -ou \"${{ inputs.okta_app_url }}\" -R \"${{ inputs.aws_role_arn }}\" -u \"${{ inputs.okta_username }}\" -p \"${{ inputs.okta_password }}\" -mm \"${OKTA_MFA_METHOD:=token:software:totp}\" -mr $mfa"
+        tokendito -ap default -ou "${{ inputs.okta_app_url }}" -R "${{ inputs.aws_role_arn }}" -u "${{ inputs.okta_username }}" -p "${{ inputs.okta_password }}" -mm "${OKTA_MFA_METHOD:=token:software:totp}" -mr $mfa
 
         cat "${awsDir}/config"
         cat "${awsDir}/credentials"
