@@ -37,34 +37,38 @@ runs:
         # echo -e "[profile default]\noutput = json" >>"$config"
         OKTA_MFA_METHOD="${{ inputs.aws_role_arn }}"
         echo "--aws-profile default -ou ${{ inputs.okta_app_url }} -R ${{ inputs.aws_role_arn }} --username ${{ inputs.okta_username }} --password ${{ inputs.okta_password }} --mfa-method ${OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo ${{ inputs.okta_mfa_seed }} | mintotp 30)"
+        tokendito --aws-profile default -ou "${{ inputs.okta_app_url }}" -R "${{ inputs.aws_role_arn }}" --username "${{ inputs.okta_username }}" --password "${{ inputs.okta_password }}" --mfa-method "${OKTA_MFA_METHOD:=token:software:totp}" --mfa-response $(echo "${{ inputs.okta_mfa_seed }}" | mintotp ${totp_time}) # 2>&1 1>/dev/null
 
-        # Attempt to get aws credentials via tokendito
-        max_attempts=10
-        totp_time=30
-        totp_error='Each code can only be used once. Please wait for a new code and try again.'
-        for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
-            echo "Requesting AWS credentials via Tokendito."
-            t_error=$(tokendito --aws-profile default -ou "${{ inputs.okta_app_url }}" -R "${{ inputs.aws_role_arn }}" --username "${{ inputs.okta_username }}" --password "${{ inputs.okta_password }}" --mfa-method "${OKTA_MFA_METHOD:=token:software:totp}" --mfa-response $(echo "${{ inputs.okta_mfa_seed }}" | mintotp ${totp_time}) 2>&1 1>/dev/null)
+        cat "${awsDir}/config"
+        cat "${awsDir}/credentials"
 
-            if [[ $? == 0 ]]; then
-                echo "Succeeded getting credentials in attempt #${attempts}."
-                break
-            fi
+        # # Attempt to get aws credentials via tokendito
+        # max_attempts=10
+        # totp_time=30
+        # totp_error='Each code can only be used once. Please wait for a new code and try again.'
+        # for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
+        #     echo "Requesting AWS credentials via Tokendito."
+        #     t_error=$(tokendito --aws-profile default -ou "${{ inputs.okta_app_url }}" -R "${{ inputs.aws_role_arn }}" --username "${{ inputs.okta_username }}" --password "${{ inputs.okta_password }}" --mfa-method "${OKTA_MFA_METHOD:=token:software:totp}" --mfa-response $(echo "${{ inputs.okta_mfa_seed }}" | mintotp ${totp_time}) 2>&1 1>/dev/null)
 
-            if [[ $t_error == *$totp_error* ]]; then
-                echo "Attempt #${attempts} => ERROR: ${totp_error}"
-                echo -e "Waiting ${totp_time} seconds before retrying...\n"
-                sleep $totp_time
-            else
-                echo $t_error
-                exit 1
-            fi
-        done
+        #     if [[ $? == 0 ]]; then
+        #         echo "Succeeded getting credentials in attempt #${attempts}."
+        #         break
+        #     fi
 
-        if [[ $attempts == $((max_attempts + 1)) ]]; then
-            echo "Giving up requesting credentials after ${max_attempts} attempts."
-            exit 1
-        fi
+        #     if [[ $t_error == *$totp_error* ]]; then
+        #         echo "Attempt #${attempts} => ERROR: ${totp_error}"
+        #         echo -e "Waiting ${totp_time} seconds before retrying...\n"
+        #         sleep $totp_time
+        #     else
+        #         echo $t_error
+        #         exit 1
+        #     fi
+        # done
+
+        # if [[ $attempts == $((max_attempts + 1)) ]]; then
+        #     echo "Giving up requesting credentials after ${max_attempts} attempts."
+        #     exit 1
+        # fi
 
         # # Exit immediately if a command exits with a non-zero status.
         # set -e
