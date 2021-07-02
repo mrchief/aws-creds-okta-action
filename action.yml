@@ -23,7 +23,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: pip install --no-cache-dir --no-warn-script-location 'tokendito>=1,<2' mintotp
+    - run: pip install -q --no-cache-dir --no-warn-script-location 'tokendito>=1,<2' mintotp
       shell: bash
     - run: |
         set -u
@@ -43,13 +43,7 @@ runs:
         totp_error='Each code can only be used once. Please wait for a new code and try again.'
         for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
             echo "Requesting AWS credentials via Tokendito."
-            t_error=$(tokendito --aws-profile default \
-              -ou ${{ inputs.okta_app_url }} \
-              -R ${{ inputs.aws_role_arn }} \
-              --username ${{ inputs.okta_username }} \
-              --password ${{ inputs.okta_password }} \
-              --mfa-method ${OKTA_MFA_METHOD:=token:software:totp} \
-              --mfa-response $(echo ${{ inputs.okta_mfa_seed }} | mintotp ${totp_time}) 2>&1 1>/dev/null)
+            t_error=$(tokendito --aws-profile default -ou ${{ inputs.okta_app_url }} -R ${{ inputs.aws_role_arn }} --username ${{ inputs.okta_username }} --password ${{ inputs.okta_password }} --mfa-method ${OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo ${{ inputs.okta_mfa_seed }} | mintotp ${totp_time}) 2>&1 1>/dev/null)
 
             if [[ $? == 0 ]]; then
                 echo "Succeeded getting credentials in attempt #${attempts}."
