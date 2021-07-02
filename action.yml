@@ -32,6 +32,7 @@ runs:
         awsDir="~/.aws"
         # config="${awsDir}/config"
         # credentials="${awsDir}/credentials"
+        totp_time=30
 
         mkdir -p "${awsDir}"
         # echo -e "[profile default]\noutput = json" >>"$config"
