@@ -8,11 +8,7 @@ config="${awsDir}/config"
 credentials="${awsDir}/credentials"
 
 mkdir -p "${awsDir}"
-echo -e "[profile $INPUT_AWS_PROFILE]\noutput = json" >>"$config"
-
-echo "AWS_CONFIG_FILE=${config}" >> $GITHUB_ENV
-echo "AWS_SHARED_CREDENTIALS_FILE=${credentials}" >> $GITHUB_ENV
-echo "AWS_PROFILE=${INPUT_AWS_PROFILE}" >> $GITHUB_ENV
+echo -e "[profile default]\noutput = json" >"$config"
 
 # Attempt to get aws credentials via tokendito
 max_attempts=10
@@ -20,7 +16,7 @@ totp_time=30
 totp_error='Each code can only be used once. Please wait for a new code and try again.'
 for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
     echo "Requesting AWS credentials via Tokendito."
-    t_error=$(tokendito --aws-profile $INPUT_AWS_PROFILE -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) 2>&1 1>/dev/null)
+    t_error=$(tokendito --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) 2>&1 1>/dev/null)
 
     if [[ $? == 0 ]]; then
         echo "Succeeded getting credentials in attempt #${attempts}."
@@ -54,7 +50,7 @@ while read -r line; do
         section="${section#[}"
     fi
     # Extract available aws export values
-    if [ "${section}" = $INPUT_AWS_PROFILE ]; then
+    if [ "${section}" = "default" ]; then
         if [[ "${line}" =~ ^[[:space:]]*aws_access_key_id[[:space:]]*=.*$ ]]; then
             aws_access_key_id="${line##*=*[[:space:]]}"
             echo "AWS_ACCESS_KEY_ID=${aws_access_key_id}" >> $GITHUB_ENV

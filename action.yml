@@ -4,10 +4,6 @@ inputs:
   aws_role_arn:
     description: "ARN of federated Okta role"
     required: true
-  aws_profile:
-    description: "The AWS profile to configure"
-    required: false
-    default: "default"
   okta_username:
     description: "Username of your Okta login (usually your email)"
     required: true
