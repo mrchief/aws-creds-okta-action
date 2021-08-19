@@ -1,6 +1,6 @@
 # 1.1.5 - 19-8-2021
 
-## Unclassified Changes
+## Features
 
 - [#17](https://github.com/mrchief/aws-creds-okta/issues17) - Write aws config file to a temporary directory ([#20](https://github.com/mrchief/aws-creds-okta/issues20))
 
