@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - "releases/**"
+      - 'releases/**'
 
 jobs:
   push:
@@ -15,29 +15,28 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
         with:
-          fetch-depth: "0"
+          fetch-depth: '0'
       - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/*
       - name: autochangelog-action
         id: ac
         uses: rubenfiszel/autochangelog-action@v0.13.0
         with:
-          changelog_file: "./CHANGELOG.md"
-          manifest_file: "./manifest.yml"
+          changelog_file: './CHANGELOG.md'
+          manifest_file: './manifest.yml'
           dry_run: false
-          issues_url_prefix: "https://github.com/mrchief/aws-creds-okta/issues"
-          tag_prefix: "v"
+          issues_url_prefix: 'https://github.com/mrchief/aws-creds-okta/issues'
+          tag_prefix: 'v'
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3.10.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update changelog and manifest"
-          title: "ci: Release ${{ steps.ac.outputs.version }}"
+          commit-message: 'Update changelog and manifest'
+          title: 'ci: Release ${{ steps.ac.outputs.version }}'
           body: |
             Release v${{ steps.ac.outputs.version }}
           labels: autorelease
           branch: automatic-release-prs
-          branch-suffix: none
       - name: Check outputs
         run: |
           echo "Pull Request Number - ${{ env.PULL_REQUEST_NUMBER }}"
