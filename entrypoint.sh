@@ -28,7 +28,7 @@ for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
         break
     fi
 
-    if [[ $t_error == *$totp_error* || $t_error == *mfa_token_error* ]]; then
+    if [[ $t_error == *$totp_error* || $t_error == *$mfa_token_error* ]]; then
         echo "Attempt #${attempts} => ERROR: ${t_error}"
         echo -e "\n\nWaiting ${totp_time} seconds before retrying...\n"
         sleep $totp_time
