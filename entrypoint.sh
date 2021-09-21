@@ -18,7 +18,7 @@ max_attempts=10
 totp_time=30
 totp_error='Each code can only be used once. Please wait for a new code and try again.'
 # can happen if the same token is used more than once (2 or more workflows requesting it around same time)
-mfa_token_error = "KeyError: 'sessionToken'"
+mfa_token_error=$'KeyError: \'sessionToken\''
 for ((attempts = 1; attempts <= $max_attempts; attempts++)); do
     echo "Requesting AWS credentials via Tokendito."
     t_error=$(tokendito --config-file $config --aws-profile default -ou $INPUT_OKTA_APP_URL -R $INPUT_AWS_ROLE_ARN --username $INPUT_OKTA_USERNAME --password $INPUT_OKTA_PASSWORD --mfa-method ${INPUT_OKTA_MFA_METHOD:=token:software:totp} --mfa-response $(echo $INPUT_OKTA_MFA_SEED | mintotp ${totp_time}) 2>&1 1>/dev/null)
