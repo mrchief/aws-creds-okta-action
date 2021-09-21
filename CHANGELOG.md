@@ -1,3 +1,8 @@
+# 1.2.0 - 21-9-2021
+### Features
+    
+- handle mfa token race condition ([#22](https://github.com/mrchief/aws-creds-okta/issues22))
+
 # 1.1.5 - 19-8-2021
 
 ## Features
