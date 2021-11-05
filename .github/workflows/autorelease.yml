@@ -4,7 +4,6 @@ on:
     types: [closed]
     branches:
       - master
-  workflow_dispatch:
 jobs:
   build:
     if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
