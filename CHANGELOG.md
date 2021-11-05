@@ -1,3 +1,8 @@
+# 1.3.0 - 5-11-2021
+### Features
+    
+- export pre-built docker image
+
 # 1.2.0 - 21-9-2021
 ### Features
     
