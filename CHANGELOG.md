@@ -1,3 +1,8 @@
+# 1.4.1 - 5-11-2021
+### Bug Fixes
+    
+- correctly output semver from build step
+
 # 1.4.0 - 5-11-2021
 
 ## Chores
