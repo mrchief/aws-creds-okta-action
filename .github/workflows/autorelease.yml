@@ -11,6 +11,8 @@ jobs:
     env:
       manifest_file: 'manifest.yml'
       changelog_file: 'CHANGELOG.md'
+    outputs:
+      output1: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -80,6 +82,8 @@ jobs:
         uses: docker/metadata-action@v3.6.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{version}},value=${{needs.build.outputs.version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.7.0
