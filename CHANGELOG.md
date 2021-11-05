@@ -1,3 +1,8 @@
+# 1.4.0 - 5-11-2021
+### Features
+    
+- use semver on docker image
+
 # 1.3.0 - 5-11-2021
 ### Features
     
