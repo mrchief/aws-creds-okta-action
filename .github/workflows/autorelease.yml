@@ -47,8 +47,9 @@ jobs:
   build-and-push-image:
     #needs: build
     runs-on: ubuntu-latest
-    REGISTRY: ghcr.io
-    IMAGE_NAME: ${{ github.repository }}
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: ${{ github.repository }}
     permissions:
       contents: read
       packages: write
