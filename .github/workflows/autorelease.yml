@@ -4,48 +4,49 @@ on:
     types: [closed]
     branches:
       - master
-  workflow_dispatch:
 jobs:
-  # build:
-  #   if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     manifest_file: 'manifest.yml'
-  #     changelog_file: 'CHANGELOG.md'
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         ref: master
-  #     - name: get version
-  #       id: version
-  #       run: |
-  #         sed -n 's/^version:\s\(.*\)$/\1/p' ${{ env.manifest_file }} | xargs -I {} echo "::set-output name=version::{}"
-  #     - name: get changelog
-  #       id: changelog
-  #       run: |
-  #         changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -I {} sed -n '/^#\s'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
-  #         echo $changelog
-  #         changelog="${changelog//'%'/'%25'}"
-  #         changelog="${changelog//$'\n'/'%0A'}"
-  #         changelog="${changelog//$'\r'/'%0D'}"
-  #         echo "::set-output name=changelog::$changelog"
-  #     - name: echo version and changelog
-  #       run: |
-  #         echo "${{ steps.version.outputs.version}}"
-  #         echo "${{ steps.changelog.outputs.changelog }}"
-  #     - name: Create Release
-  #       uses: ncipollo/release-action@v1.4.0
-  #       with:
-  #         name: ${{ steps.version.outputs.version }}
-  #         tag: v${{ steps.version.outputs.version }}
-  #         body: ${{ steps.changelog.outputs.changelog}}
-  #         draft: false
-  #         prerelease: false
-  #         # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
-  #         token: ${{ secrets.GITHUB_TOKEN }}
+  build:
+    if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
+    runs-on: ubuntu-latest
+    env:
+      manifest_file: 'manifest.yml'
+      changelog_file: 'CHANGELOG.md'
+    outputs:
+      output1: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - name: get version
+        id: version
+        run: |
+          sed -n 's/^version:\s\(.*\)$/\1/p' ${{ env.manifest_file }} | xargs -I {} echo "::set-output name=version::{}"
+      - name: get changelog
+        id: changelog
+        run: |
+          changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -I {} sed -n '/^#\s'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
+          echo $changelog
+          changelog="${changelog//'%'/'%25'}"
+          changelog="${changelog//$'\n'/'%0A'}"
+          changelog="${changelog//$'\r'/'%0D'}"
+          echo "::set-output name=changelog::$changelog"
+      - name: echo version and changelog
+        run: |
+          echo "${{ steps.version.outputs.version}}"
+          echo "${{ steps.changelog.outputs.changelog }}"
+      - name: Create Release
+        uses: ncipollo/release-action@v1.4.0
+        with:
+          name: ${{ steps.version.outputs.version }}
+          tag: v${{ steps.version.outputs.version }}
+          body: ${{ steps.changelog.outputs.changelog}}
+          draft: false
+          prerelease: false
+          # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-push-image:
-    #needs: build
+    needs: build
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io
@@ -81,6 +82,8 @@ jobs:
         uses: docker/metadata-action@v3.6.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=semver,pattern={{version}},value=${{needs.build.outputs.version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.7.0
