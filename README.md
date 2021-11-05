@@ -8,7 +8,7 @@ Here's an example. All options are required except `okta_mfa_method` which defau
 
 ```yaml
 - name: Create AWS profile
-  uses: docker://ghcr.io/mrchief/aws-creds-okta@v1.2.1 # or a tagged release version  
+  uses: docker://ghcr.io/mrchief/aws-creds-okta@v1.4.1 # or a tagged release version  
   with:
     aws_role_arn: arn:aws:iam::account-id:role/role-name
     okta_username: okta.user@mycompany.com
