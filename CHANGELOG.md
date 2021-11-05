@@ -1,6 +1,6 @@
 # 1.4.0 - 5-11-2021
 
-## Unclassified Changes
+## Chores
 
 - Update changelog and manifest ([#26](https://github.com/mrchief/aws-creds-okta/issues26))
 
