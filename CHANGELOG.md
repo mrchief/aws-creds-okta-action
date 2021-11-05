@@ -1,4 +1,16 @@
 # 1.4.0 - 5-11-2021
+
+## Unclassified Changes
+
+- Update changelog and manifest ([#26](https://github.com/mrchief/aws-creds-okta/issues26))
+
+## Changes
+
+### Features
+    
+- export pre-built docker image
+
+# 1.4.0 - 5-11-2021
 ### Features
     
 - use semver on docker image
