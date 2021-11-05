@@ -5,14 +5,14 @@ on:
     branches:
       - master
 jobs:
-  build:
+  github-release:
     if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
     runs-on: ubuntu-latest
     env:
       manifest_file: 'manifest.yml'
       changelog_file: 'CHANGELOG.md'
     outputs:
-      output1: ${{ steps.version.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,8 +45,8 @@ jobs:
           # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
           token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-push-image:
-    needs: build
+  build-and-push-docker-image:
+    needs: github-release
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io
@@ -83,7 +83,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=semver,pattern={{version}},value=${{needs.build.outputs.version}}
+            type=semver,pattern={{version}},value=${{needs.github-release.outputs.version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v2.7.0
