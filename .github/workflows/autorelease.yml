@@ -4,41 +4,94 @@ on:
     types: [closed]
     branches:
       - master
+  workflow_dispatch:
 jobs:
-  build:
-    if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
+  # build:
+  #   if: github.event.pull_request.merged == true && contains(toJSON(github.event.pull_request.labels.*.name), '"autorelease"')
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     manifest_file: 'manifest.yml'
+  #     changelog_file: 'CHANGELOG.md'
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #       with:
+  #         ref: master
+  #     - name: get version
+  #       id: version
+  #       run: |
+  #         sed -n 's/^version:\s\(.*\)$/\1/p' ${{ env.manifest_file }} | xargs -I {} echo "::set-output name=version::{}"
+  #     - name: get changelog
+  #       id: changelog
+  #       run: |
+  #         changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -I {} sed -n '/^#\s'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
+  #         echo $changelog
+  #         changelog="${changelog//'%'/'%25'}"
+  #         changelog="${changelog//$'\n'/'%0A'}"
+  #         changelog="${changelog//$'\r'/'%0D'}"
+  #         echo "::set-output name=changelog::$changelog"
+  #     - name: echo version and changelog
+  #       run: |
+  #         echo "${{ steps.version.outputs.version}}"
+  #         echo "${{ steps.changelog.outputs.changelog }}"
+  #     - name: Create Release
+  #       uses: ncipollo/release-action@v1.4.0
+  #       with:
+  #         name: ${{ steps.version.outputs.version }}
+  #         tag: v${{ steps.version.outputs.version }}
+  #         body: ${{ steps.changelog.outputs.changelog}}
+  #         draft: false
+  #         prerelease: false
+  #         # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-push-image:
+    #needs: build
     runs-on: ubuntu-latest
-    env:
-      manifest_file: "manifest.yml"
-      changelog_file: "CHANGELOG.md"
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
         with:
-          ref: master
-      - name: get version
-        id: version
-        run: |
-          sed -n 's/^version:\s\(.*\)$/\1/p' ${{ env.manifest_file }} | xargs -I {} echo "::set-output name=version::{}"
-      - name: get changelog
-        id: changelog
-        run: |
-          changelog=$(echo "${{ steps.version.outputs.version}}" | xargs -I {} sed -n '/^#\s'"{}"'.*$/,/^#\s\([^[:space:]]\+\).*$/{//!p}' ${{ env.changelog_file }})
-          echo $changelog
-          changelog="${changelog//'%'/'%25'}"
-          changelog="${changelog//$'\n'/'%0A'}"
-          changelog="${changelog//$'\r'/'%0D'}"
-          echo "::set-output name=changelog::$changelog"
-      - name: echo version and changelog
-        run: |
-          echo "${{ steps.version.outputs.version}}"
-          echo "${{ steps.changelog.outputs.changelog }}"
-      - name: Create Release
-        uses: ncipollo/release-action@v1.4.0
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v1.0.0
         with:
-          name: ${{ steps.version.outputs.version }}
-          tag: v${{ steps.version.outputs.version }}
-          body: ${{ steps.changelog.outputs.changelog}}
-          draft: false
-          prerelease: false
-          # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
-          token: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3.6.0
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2.7.0
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
