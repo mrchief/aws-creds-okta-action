@@ -1,5 +1,9 @@
 # 1.4.2 - 8-11-2021
 
+## Chores
+
+- update docker image name to match action
+
 # 1.4.1 - 5-11-2021
 ### Bug Fixes
     
