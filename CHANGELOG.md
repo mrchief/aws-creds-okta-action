@@ -1,3 +1,8 @@
+# 1.4.3 - 9-11-2021
+### Bug Fixes
+    
+- action name to match repo name 🐛
+
 # 1.4.2 - 8-11-2021
 
 ## Chores
