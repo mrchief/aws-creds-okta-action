@@ -8,7 +8,7 @@ Here's an example. All options are required except `okta_mfa_method` which defau
 
 ```yaml
 - name: Create AWS profile
-  uses: docker://ghcr.io/mrchief/aws-creds-okta@v1.4.1 # or a tagged release version  
+  uses: docker://ghcr.io/mrchief/aws-creds-okta-action:latest # or a specific tagged version  
   with:
     aws_role_arn: arn:aws:iam::account-id:role/role-name
     okta_username: okta.user@mycompany.com
@@ -20,7 +20,7 @@ Here's an example. All options are required except `okta_mfa_method` which defau
 💡 **Note** You can also use the non docker image version of the action by switching to: 
 
 ```
-  uses: mrchief/aws-creds-okta@<tag|sha|branch>
+  uses: mrchief/aws-creds-okta-action@<tag|sha|branch>
 ```
 
 Once this step runs it'll set the following environment variables for subsequent steps:

@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME: aws-creds-okta
+      IMAGE_NAME: ${{github.repository}}
     permissions:
       contents: read
       packages: write
