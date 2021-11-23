@@ -1,5 +1,9 @@
 # 1.4.5 - 23-11-2021
 
+## Chores
+
+- fix dockerhub tagging
+
 # 1.4.4 - 23-11-2021
 
 ## Chores
