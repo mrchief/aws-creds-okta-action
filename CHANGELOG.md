@@ -1,7 +1,13 @@
 # 1.4.5 - 23-11-2021
+## Changes
+
 ### Bug Fixes
     
 - workflow syntax
+
+### Chores
+
+- fix dockerhub tagging
 
 # 1.4.4 - 23-11-2021
 
