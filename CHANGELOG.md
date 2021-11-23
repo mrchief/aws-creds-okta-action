@@ -4,10 +4,7 @@
 ### Bug Fixes
     
 - workflow syntax
-
-### Chores
-
-- fix dockerhub tagging
+- dockerhub tagging
 
 # 1.4.4 - 23-11-2021
 
