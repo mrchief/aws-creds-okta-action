@@ -1,3 +1,9 @@
+# 1.4.4 - 23-11-2021
+
+## Chores
+
+- publish to docker hub as well
+
 # 1.4.3 - 9-11-2021
 ### Bug Fixes
     
