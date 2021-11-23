@@ -1,3 +1,8 @@
+# 1.4.5 - 23-11-2021
+### Bug Fixes
+    
+- workflow syntax
+
 # 1.4.4 - 23-11-2021
 
 ## Chores
